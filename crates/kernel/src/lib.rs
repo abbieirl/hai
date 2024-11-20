@@ -1,0 +1,7 @@
+#![no_std]
+
+pub mod alloc;
+pub mod memory;
+
+#[repr(C)]
+pub struct FrameBuffer {}

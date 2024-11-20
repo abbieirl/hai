@@ -1,0 +1,51 @@
+#![no_std]
+#![no_main]
+
+#[uefi::entry]
+#[cfg(target_os = "uefi")]
+fn efi_main() -> uefi::Status {
+    use core::ptr::null_mut;
+
+    use uefi::boot::{MemoryType, exit_boot_services};
+    use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
+    use uefi::mem::memory_map::MemoryMap;
+    use uefi::proto::console::gop::GraphicsOutput;
+    use uefi::system::{firmware_revision, firmware_vendor};
+
+    let _vendor = firmware_vendor();
+    let revision = firmware_revision();
+
+    let _framebuffer = {
+        let handle = get_handle_for_protocol::<GraphicsOutput>().unwrap();
+        let mut gop = open_protocol_exclusive::<GraphicsOutput>(handle).unwrap();
+        let _mode_info = gop.current_mode_info();
+        gop.frame_buffer().as_mut_ptr()
+    };
+
+    let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
+
+    mmap.entries().for_each(|descriptor| match descriptor.ty {
+        MemoryType::CONVENTIONAL => {
+            let size = descriptor.page_count * 0x1000;
+            let _end = descriptor.phys_start + size;
+        }
+        _ => (),
+    });
+
+    kernel_main(BootInfo { revision });
+
+    uefi::Status::SUCCESS
+}
+
+#[inline(never)]
+extern "C" fn kernel_main(_boot_info: BootInfo) {
+    cpu64::interrupt::enable();
+
+    #[allow(clippy::empty_loop)]
+    loop {}
+}
+
+#[repr(C)]
+pub struct BootInfo {
+    revision: u32,
+}
