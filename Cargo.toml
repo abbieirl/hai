@@ -1,0 +1,21 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+exclude = ["scripts/qemu.rs"]
+
+[workspace.package]
+publish = false
+edition = "2024"
+license = "MIT"
+authors = ["Abbie"]
+repository = "https://github.com/abbieirl/hai"
+
+[workspace.lints.clippy]
+nursery = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+cargo_common_metadata = "allow"
+
+[profile.release]
+codegen-units = 1
+strip = true
+lto = true
