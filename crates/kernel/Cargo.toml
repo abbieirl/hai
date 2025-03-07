@@ -13,6 +13,9 @@ workspace = true
 [dependencies]
 cpu64 = { path = "../cpu64" }
 
+[build-dependencies]
+cbindgen = "0.24.0"
+
 [target.'cfg(target_os = "uefi")'.dependencies]
 uefi = { version = "0.33.0", features = [
     "panic_handler",
