@@ -37,7 +37,7 @@ fn efi_main() -> uefi::Status {
     uefi::Status::SUCCESS
 }
 
-#[inline(never)]
+#[unsafe(no_mangle)]
 extern "C" fn kernel_main(_boot_info: BootInfo) {
     cpu64::interrupt::enable();
 

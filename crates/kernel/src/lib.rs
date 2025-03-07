@@ -8,7 +8,3 @@ pub mod memory;
 pub struct BootInfo {
     pub revision: u32,
 }
-
-#[repr(C)]
-#[derive(Debug)]
-pub struct FrameBuffer {}
