@@ -1,11 +1,11 @@
 #![no_std]
 #![no_main]
 
+use kernel::BootInfo;
+
 #[uefi::entry]
 #[cfg(target_os = "uefi")]
 fn efi_main() -> uefi::Status {
-    use core::ptr::null_mut;
-
     use uefi::boot::{MemoryType, exit_boot_services};
     use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
     use uefi::mem::memory_map::MemoryMap;
@@ -43,9 +43,4 @@ extern "C" fn kernel_main(_boot_info: BootInfo) {
 
     #[allow(clippy::empty_loop)]
     loop {}
-}
-
-#[repr(C)]
-pub struct BootInfo {
-    revision: u32,
 }
