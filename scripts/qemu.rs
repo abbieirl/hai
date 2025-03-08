@@ -27,7 +27,7 @@ fn main() -> Result<()> {
 
     let esp = Path::new(&binary).parent().unwrap().join("esp");
     let boot = esp.join("efi").join("boot");
-    let dst = esp.join("bootx64.efi");
+    let dst = boot.join("bootx64.efi");
 
     create_dir_all(&boot)?;
     copy(&binary, &dst)?;
