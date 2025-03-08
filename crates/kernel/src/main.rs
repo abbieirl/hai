@@ -10,10 +10,18 @@ fn efi_main() -> uefi::Status {
     use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
     use uefi::mem::memory_map::MemoryMap;
     use uefi::proto::console::gop::GraphicsOutput;
+    use uefi::proto::console::text::Output;
     use uefi::system::{firmware_revision, firmware_vendor};
+    use core::fmt::Write;
 
     let _vendor = firmware_vendor();
     let revision = firmware_revision();
+
+    {
+        let handle = get_handle_for_protocol::<Output>().unwrap();
+        let mut console = open_protocol_exclusive::<Output>(handle).unwrap();
+        writeln!(console, "HaiOS UEFI Boot v{}", env!("CARGO_PKG_VERSION")).unwrap();
+    }
 
     let _framebuffer = {
         let handle = get_handle_for_protocol::<GraphicsOutput>().unwrap();
