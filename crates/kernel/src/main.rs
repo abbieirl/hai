@@ -23,7 +23,7 @@ fn efi_main() -> uefi::Status {
         writeln!(console, "HaiOS UEFI Boot v{}", env!("CARGO_PKG_VERSION")).unwrap();
     }
 
-    let _framebuffer = {
+    let framebuffer = {
         let handle = get_handle_for_protocol::<GraphicsOutput>().unwrap();
         let mut gop = open_protocol_exclusive::<GraphicsOutput>(handle).unwrap();
         let _mode_info = gop.current_mode_info();
@@ -40,7 +40,7 @@ fn efi_main() -> uefi::Status {
         _ => (),
     });
 
-    kernel_main(BootInfo { revision });
+    kernel_main(BootInfo { revision, framebuffer });
 
     uefi::Status::SUCCESS
 }

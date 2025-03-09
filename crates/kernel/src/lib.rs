@@ -7,6 +7,7 @@ pub mod memory;
 #[derive(Debug)]
 pub struct BootInfo {
     pub revision: u32,
+    pub framebuffer: *mut u8,
 }
 
 #[repr(C)]
