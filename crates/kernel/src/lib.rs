@@ -6,7 +6,8 @@ pub mod memory;
 #[repr(C)]
 #[derive(Debug)]
 pub struct BootInfo {
-    pub revision: u32,
+    pub firmware_revision: u32,
+    pub uefi_revision: u32,
 }
 
 #[repr(C)]
