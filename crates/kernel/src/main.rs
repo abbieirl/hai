@@ -11,10 +11,11 @@ fn efi_main() -> uefi::Status {
     use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
     use uefi::mem::memory_map::MemoryMap;
     use uefi::proto::console::text::Output;
-    use uefi::system::{firmware_revision, firmware_vendor};
+    use uefi::system::{firmware_revision, firmware_vendor, uefi_revision};
 
-    let _vendor = firmware_vendor();
-    let revision = firmware_revision();
+    let _fw_vendor = firmware_vendor();
+    let fw_revision = firmware_revision();
+    let _uefi_revision = uefi_revision();
 
     let mut console = {
         let handle = get_handle_for_protocol::<Output>().unwrap();
@@ -33,7 +34,7 @@ fn efi_main() -> uefi::Status {
         _ => (),
     });
 
-    kernel_main(BootInfo { revision });
+    kernel_main(BootInfo { revision: fw_revision });
 
     uefi::Status::SUCCESS
 }
