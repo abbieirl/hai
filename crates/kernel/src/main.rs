@@ -35,6 +35,7 @@ fn efi_main() -> uefi::Status {
     });
 
     kernel_main(BootInfo {
+        firmware_vendor: c"".as_ptr(),
         firmware_revision,
         uefi_revision,
     });

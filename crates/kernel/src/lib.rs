@@ -1,11 +1,14 @@
 #![no_std]
 
+use core::ffi::c_char;
+
 pub mod alloc;
 pub mod memory;
 
 #[repr(C)]
 #[derive(Debug)]
 pub struct BootInfo {
+    pub firmware_vendor: *const c_char,
     pub firmware_revision: u32,
     pub uefi_revision: u32,
 }
