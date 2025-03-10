@@ -5,9 +5,8 @@ pub mod memory;
 
 #[repr(C)]
 #[derive(Debug)]
-pub struct BootInfo<'a> {
+pub struct BootInfo {
     pub revision: u32,
-    pub framebuffer: &'a Framebuffer,
 }
 
 #[repr(C)]
@@ -21,4 +20,9 @@ pub struct BootTime {
 #[derive(Debug)]
 pub struct Framebuffer {
     pub ptr: *mut u8,
+}
+
+impl Framebuffer {
+    fn read() {}
+    fn write() {}
 }

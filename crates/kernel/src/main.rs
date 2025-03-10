@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use kernel::{BootInfo, Framebuffer};
+use kernel::BootInfo;
 
 #[uefi::entry]
 #[cfg(target_os = "uefi")]
@@ -10,7 +10,6 @@ fn efi_main() -> uefi::Status {
     use uefi::boot::{MemoryType, exit_boot_services};
     use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
     use uefi::mem::memory_map::MemoryMap;
-    use uefi::proto::console::gop::GraphicsOutput;
     use uefi::proto::console::text::Output;
     use uefi::system::{firmware_revision, firmware_vendor};
 
@@ -24,17 +23,6 @@ fn efi_main() -> uefi::Status {
 
     writeln!(console, "HaiOS UEFI Boot v{}", env!("CARGO_PKG_VERSION")).unwrap();
 
-    let framebuffer = {
-        let handle = get_handle_for_protocol::<GraphicsOutput>().unwrap();
-        let mut gop = open_protocol_exclusive::<GraphicsOutput>(handle).unwrap();
-        let mode_info = gop.current_mode_info();
-        let _res = mode_info.resolution();
-
-        Framebuffer {
-            ptr: gop.frame_buffer().as_mut_ptr(),
-        }
-    };
-
     let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
 
     mmap.entries().for_each(|descriptor| match descriptor.ty {
@@ -45,10 +33,7 @@ fn efi_main() -> uefi::Status {
         _ => (),
     });
 
-    kernel_main(BootInfo {
-        revision,
-        framebuffer: &framebuffer,
-    });
+    kernel_main(BootInfo { revision });
 
     uefi::Status::SUCCESS
 }
