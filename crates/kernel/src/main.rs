@@ -6,6 +6,8 @@ use kernel::BootInfo;
 #[uefi::entry]
 #[cfg(target_os = "uefi")]
 fn efi_main() -> uefi::Status {
+    use arrayvec::ArrayString;
+    use core::ffi::CStr;
     use core::fmt::Write;
     use uefi::boot::{MemoryType, exit_boot_services};
     use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
@@ -13,7 +15,13 @@ fn efi_main() -> uefi::Status {
     use uefi::proto::console::text::Output;
     use uefi::system::{firmware_revision, firmware_vendor, uefi_revision};
 
-    let _firmware_vendor = firmware_vendor();
+    let firmware_vendor = {
+        let vendor = firmware_vendor();
+        let mut buf = ArrayString::<128>::new();
+        vendor.as_str_in_buf(&mut buf).unwrap();
+        buf.as_ptr().cast()
+    };
+
     let firmware_revision = firmware_revision();
     let uefi_revision = uefi_revision().0;
 
@@ -22,14 +30,17 @@ fn efi_main() -> uefi::Status {
         open_protocol_exclusive::<Output>(handle).unwrap()
     };
 
+    writeln!(console, "HaiOS UEFI Boot v{}", env!("CARGO_PKG_VERSION"),).unwrap();
+
     writeln!(
         console,
-        "HaiOS UEFI Boot v{} - Firmware Revision: {} - UEFI Revision: {}",
-        env!("CARGO_PKG_VERSION"),
+        "Firmware {} - {}",
+        unsafe { CStr::from_ptr(firmware_vendor).to_str().unwrap() },
         firmware_revision,
-        uefi_revision
     )
     .unwrap();
+
+    writeln!(console, "UEFI {}", uefi_revision).unwrap();
 
     let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
 
@@ -42,7 +53,7 @@ fn efi_main() -> uefi::Status {
     });
 
     kernel_main(BootInfo {
-        firmware_vendor: c"".as_ptr(),
+        firmware_vendor,
         firmware_revision,
         uefi_revision,
     });
