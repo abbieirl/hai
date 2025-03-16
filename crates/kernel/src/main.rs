@@ -23,24 +23,24 @@ fn efi_main() -> uefi::Status {
     };
 
     let firmware_revision = firmware_revision();
-    let uefi_revision = uefi_revision().0;
+    let uefi_revision = uefi_revision();
 
     let mut console = {
         let handle = get_handle_for_protocol::<Output>().unwrap();
         open_protocol_exclusive::<Output>(handle).unwrap()
     };
 
-    writeln!(console, "HaiOS UEFI Boot v{}", env!("CARGO_PKG_VERSION"),).unwrap();
-
     writeln!(
         console,
-        "Firmware {} - {}",
+        "HaiOS v{} / {} v{}.{} / UEFI v{}.{}",
+        env!("CARGO_PKG_VERSION"),
         unsafe { CStr::from_ptr(firmware_vendor).to_str().unwrap() },
-        firmware_revision,
+        (firmware_revision >> 16) & 0xFFFF,
+        firmware_revision & 0xFFFF,
+        uefi_revision.major(),
+        uefi_revision.minor()
     )
     .unwrap();
-
-    writeln!(console, "UEFI {}", uefi_revision).unwrap();
 
     let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
 
@@ -55,7 +55,7 @@ fn efi_main() -> uefi::Status {
     kernel_main(BootInfo {
         firmware_vendor,
         firmware_revision,
-        uefi_revision,
+        uefi_revision: uefi_revision.0,
     });
 
     uefi::Status::SUCCESS
