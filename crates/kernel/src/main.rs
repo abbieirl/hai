@@ -22,7 +22,14 @@ fn efi_main() -> uefi::Status {
         open_protocol_exclusive::<Output>(handle).unwrap()
     };
 
-    writeln!(console, "HaiOS UEFI Boot v{}", env!("CARGO_PKG_VERSION")).unwrap();
+    writeln!(
+        console,
+        "HaiOS UEFI Boot v{} - Firmware Revision: {} - UEFI Revision: {}",
+        env!("CARGO_PKG_VERSION"),
+        firmware_revision,
+        uefi_revision
+    )
+    .unwrap();
 
     let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
 
