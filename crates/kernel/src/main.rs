@@ -1,46 +1,19 @@
 #![no_std]
 #![no_main]
 
-use kernel::BootInfo;
+use kernel::Status;
 
-#[uefi::entry]
 #[cfg(target_os = "uefi")]
-fn efi_main() -> uefi::Status {
-    use arrayvec::ArrayString;
-    use core::ffi::CStr;
-    use core::fmt::Write;
+#[unsafe(no_mangle)]
+extern "efiapi" fn efi_main(
+    image_handle: uefi::Handle,
+    system_table: *const core::ffi::c_void,
+) -> uefi::Status {
     use uefi::boot::{MemoryType, exit_boot_services};
-    use uefi::boot::{get_handle_for_protocol, open_protocol_exclusive};
     use uefi::mem::memory_map::MemoryMap;
-    use uefi::proto::console::text::Output;
-    use uefi::system::{firmware_revision, firmware_vendor, uefi_revision};
 
-    let firmware_vendor = {
-        let vendor = firmware_vendor();
-        let mut buf = ArrayString::<128>::new();
-        vendor.as_str_in_buf(&mut buf).unwrap();
-        buf.as_ptr().cast()
-    };
-
-    let firmware_revision = firmware_revision();
-    let uefi_revision = uefi_revision();
-
-    let mut console = {
-        let handle = get_handle_for_protocol::<Output>().unwrap();
-        open_protocol_exclusive::<Output>(handle).unwrap()
-    };
-
-    writeln!(
-        console,
-        "HaiOS v{} / {} v{}.{} / UEFI v{}.{}",
-        env!("CARGO_PKG_VERSION"),
-        unsafe { CStr::from_ptr(firmware_vendor).to_str().unwrap() },
-        (firmware_revision >> 16) & 0xFFFF,
-        firmware_revision & 0xFFFF,
-        uefi_revision.major(),
-        uefi_revision.minor()
-    )
-    .unwrap();
+    unsafe { uefi::table::set_system_table(system_table.cast()) };
+    unsafe { uefi::boot::set_image_handle(image_handle) };
 
     let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
 
@@ -52,17 +25,11 @@ fn efi_main() -> uefi::Status {
         _ => (),
     });
 
-    kernel_main(BootInfo {
-        firmware_vendor,
-        firmware_revision,
-        uefi_revision: uefi_revision.0,
-    });
-
-    uefi::Status::SUCCESS
+    kernel_main().into()
 }
 
 #[unsafe(no_mangle)]
-extern "C" fn kernel_main(_boot_info: BootInfo) {
+extern "C" fn kernel_main() -> Status {
     cpu64::interrupt::enable();
 
     #[allow(clippy::empty_loop)]
