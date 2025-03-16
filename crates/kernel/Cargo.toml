@@ -13,6 +13,7 @@ workspace = true
 [dependencies]
 arrayvec = { version = "0.7.6", default-features = false }
 cpu64 = { path = "../cpu64" }
+uefi-raw = "0.10.0"
 
 [build-dependencies]
 cbindgen = "0.24.0"

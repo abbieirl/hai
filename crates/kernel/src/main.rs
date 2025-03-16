@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use kernel::Status;
+use kernel::{BootInfo, Status};
 
 #[cfg(target_os = "uefi")]
 #[unsafe(no_mangle)]
@@ -25,11 +25,11 @@ extern "efiapi" fn efi_main(
         _ => (),
     });
 
-    kernel_main().into()
+    kernel_main(BootInfo::uefi()).into()
 }
 
 #[unsafe(no_mangle)]
-extern "C" fn kernel_main() -> Status {
+extern "C" fn kernel_main(_boot_info: BootInfo) -> Status {
     cpu64::interrupt::enable();
 
     #[allow(clippy::empty_loop)]
