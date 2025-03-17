@@ -41,6 +41,8 @@ impl CR3 {
         Self::from_bits_truncate(cr3)
     }
 
+    /// # Safety
+    /// todo!()
     #[inline]
     pub unsafe fn write_raw(cr3: Self) {
         unsafe { asm!("mov cr4, {}", in(reg) cr3.bits(), options(nomem, nostack, preserves_flags)) }

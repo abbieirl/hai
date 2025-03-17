@@ -96,6 +96,8 @@ bitflags! {
 }
 
 impl CR4 {
+    /// # Safety
+    /// todo!()
     #[inline]
     pub unsafe fn read() -> Self {
         let cr4: u64;
@@ -103,6 +105,8 @@ impl CR4 {
         Self::from_bits_truncate(cr4)
     }
 
+    /// # Safety
+    /// todo!()
     #[inline]
     pub unsafe fn write(cr4: Self) {
         unsafe { asm!("mov cr4, {}", in(reg) cr4.bits(), options(nomem, nostack, preserves_flags)) }

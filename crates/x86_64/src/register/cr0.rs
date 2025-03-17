@@ -60,6 +60,8 @@ impl CR0 {
         Self::from_bits_retain(flags)
     }
 
+    /// # Safety
+    /// todo!()
     #[inline]
     pub unsafe fn write(flags: Self) {
         unsafe {
@@ -67,6 +69,8 @@ impl CR0 {
         }
     }
 
+    /// # Safety
+    /// todo!()
     #[inline]
     pub unsafe fn update(f: impl FnOnce(&mut Self)) {
         let mut cr0 = Self::read();

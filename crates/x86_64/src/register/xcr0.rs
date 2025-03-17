@@ -29,6 +29,8 @@ bitflags! {
 }
 
 impl XCR0 {
+    /// # Safety
+    /// todo!()
     #[inline]
     pub unsafe fn read() -> Self {
         let xcr0: u64;
