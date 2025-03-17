@@ -15,13 +15,9 @@ arrayvec = { version = "0.7.6", default-features = false }
 cpu64 = { path = "../cpu64" }
 uefi-raw = "0.10.0"
 
+[target.'cfg(target_os = "uefi")'.dependencies.uefi]
+version = "0.34.1"
+features = ["panic_handler", "alloc", "global_allocator", "logger"]
+
 [build-dependencies]
 cbindgen = "0.24.0"
-
-[target.'cfg(target_os = "uefi")'.dependencies]
-uefi = { version = "0.33.0", features = [
-    "panic_handler",
-    "alloc",
-    "global_allocator",
-    "logger",
-] }
