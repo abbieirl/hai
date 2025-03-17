@@ -23,23 +23,7 @@ impl From<Status> for uefi::Status {
 
 #[repr(C)]
 pub struct BootInfo {
-    firmware_vendor: *const c_void,
-    firmware_revision: u32,
-    uefi_revision: u32,
-}
-
-impl BootInfo {
-    #[cfg(target_os = "uefi")]
-    pub fn uefi() -> Self {
-        use uefi::system::{firmware_revision, firmware_vendor, uefi_revision};
-
-        let mut buf = ArrayString::<128>::new();
-        firmware_vendor().as_str_in_buf(&mut buf).unwrap();
-
-        BootInfo {
-            firmware_vendor: buf.as_ptr().cast(),
-            firmware_revision: firmware_revision(),
-            uefi_revision: uefi_revision().0,
-        }
-    }
+    pub firmware_vendor: *const c_void,
+    pub firmware_revision: u32,
+    pub uefi_revision: u32,
 }

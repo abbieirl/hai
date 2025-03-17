@@ -9,11 +9,19 @@ extern "efiapi" fn efi_main(
     image_handle: uefi::Handle,
     system_table: *const core::ffi::c_void,
 ) -> uefi::Status {
+    use arrayvec::ArrayString;
     use uefi::boot::{MemoryType, exit_boot_services};
     use uefi::mem::memory_map::MemoryMap;
+    use uefi::system::{firmware_revision, firmware_vendor, uefi_revision};
 
     unsafe { uefi::table::set_system_table(system_table.cast()) };
     unsafe { uefi::boot::set_image_handle(image_handle) };
+
+    let (firmware_vendor, firmware_revision, uefi_revision) = {
+        let mut buf = ArrayString::<128>::new();
+        firmware_vendor().as_str_in_buf(&mut buf).unwrap();
+        (buf.as_ptr().cast(), firmware_revision(), uefi_revision().0)
+    };
 
     let mmap = unsafe { exit_boot_services(MemoryType::LOADER_DATA) };
 
@@ -25,7 +33,12 @@ extern "efiapi" fn efi_main(
         _ => (),
     });
 
-    kernel_main(BootInfo::uefi()).into()
+    kernel_main(BootInfo {
+        firmware_vendor,
+        firmware_revision,
+        uefi_revision,
+    })
+    .into()
 }
 
 #[unsafe(no_mangle)]
