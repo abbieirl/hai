@@ -25,3 +25,6 @@ pub struct BootInfo {
     pub firmware_revision: u32,
     pub uefi_revision: u32,
 }
+
+#[repr(C)]
+pub struct MemoryMap {}
