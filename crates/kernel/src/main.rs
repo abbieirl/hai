@@ -45,6 +45,7 @@ extern "efiapi" fn efi_main(
 extern "C" fn kernel_main(_boot_info: BootInfo) -> Status {
     cpu64::interrupt::enable();
 
-    #[allow(clippy::empty_loop)]
-    loop {}
+    loop {
+        core::hint::spin_loop();
+    }
 }
