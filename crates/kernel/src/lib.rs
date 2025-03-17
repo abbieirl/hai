@@ -2,8 +2,6 @@
 
 use core::ffi::c_void;
 
-use arrayvec::ArrayString;
-
 pub mod alloc;
 pub mod memory;
 
