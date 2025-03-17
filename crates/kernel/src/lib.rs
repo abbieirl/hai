@@ -14,7 +14,7 @@ pub enum Status {
 impl From<Status> for uefi::Status {
     fn from(status: Status) -> Self {
         match status {
-            Status::Success => uefi::Status::SUCCESS,
+            Status::Success => Self::SUCCESS,
         }
     }
 }
