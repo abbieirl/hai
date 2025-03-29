@@ -1,4 +1,4 @@
-use crate::register::CR0;
+use crate::register::{CR0, Write};
 
 /// Enables paging.
 #[inline]

@@ -23,3 +23,5 @@ pub fn disable() {
     #[cfg(target_arch = "x86_64")]
     x86_64::interrupt::disable();
 }
+
+pub fn page_fault(f: impl Fn()) {}

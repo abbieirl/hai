@@ -1,3 +1,4 @@
+use super::{Read, Write};
 use bitflags::bitflags;
 use core::arch::asm;
 
@@ -52,29 +53,20 @@ bitflags! {
     }
 }
 
-impl CR0 {
+impl Read for CR0 {
     #[inline]
-    pub fn read() -> Self {
+    fn read() -> Self {
         let flags: u64;
         unsafe { asm!("mov {}, cr0", out(reg) flags, options(nomem, nostack, preserves_flags)) };
         Self::from_bits_retain(flags)
     }
+}
 
-    /// # Safety
-    /// todo!()
+impl Write for CR0 {
     #[inline]
-    pub unsafe fn write(flags: Self) {
+    unsafe fn write(flags: Self) {
         unsafe {
             asm!("mov cr0, {}", in(reg) flags.bits(), options(nomem, nostack, preserves_flags))
         }
-    }
-
-    /// # Safety
-    /// todo!()
-    #[inline]
-    pub unsafe fn update(f: impl FnOnce(&mut Self)) {
-        let mut cr0 = Self::read();
-        f(&mut cr0);
-        unsafe { Self::write(cr0) };
     }
 }
