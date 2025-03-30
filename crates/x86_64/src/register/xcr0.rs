@@ -1,7 +1,6 @@
+use super::Read;
 use bitflags::bitflags;
 use core::arch::asm;
-
-use super::Read;
 
 bitflags! {
     #[repr(transparent)]
