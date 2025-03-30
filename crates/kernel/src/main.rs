@@ -44,11 +44,6 @@ pub extern "efiapi" fn efi_main(
 pub extern "C" fn kernel_main(_boot_info: BootInfo) -> Status {
     cpu64::interrupt::enable();
 
-    #[cfg(target_arch = "riscv64")]
-    {
-        
-    }
-
     loop {
         core::hint::spin_loop();
     }
