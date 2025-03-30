@@ -54,8 +54,10 @@ bitflags! {
 }
 
 impl Read for CR0 {
+    type Output = Self;
+
     #[inline]
-    fn read() -> Self {
+    fn read() -> Self::Output {
         let flags: u64;
         unsafe { asm!("mov {}, cr0", out(reg) flags, options(nomem, nostack, preserves_flags)) };
         Self::from_bits_retain(flags)
