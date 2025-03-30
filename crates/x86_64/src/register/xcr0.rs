@@ -1,6 +1,8 @@
 use bitflags::bitflags;
 use core::arch::asm;
 
+use super::Read;
+
 bitflags! {
     #[repr(transparent)]
     #[derive(Debug)]
@@ -28,11 +30,11 @@ bitflags! {
     }
 }
 
-impl XCR0 {
-    /// # Safety
-    /// todo!()
+impl Read for XCR0 {
+    type Output = Self;
+
     #[inline]
-    pub unsafe fn read() -> Self {
+    fn read() -> Self::Output {
         let xcr0: u64;
         unsafe { asm!("mov {}, xcr0", out(reg) xcr0, options(nomem, nostack, preserves_flags)) };
         Self::from_bits_truncate(xcr0)

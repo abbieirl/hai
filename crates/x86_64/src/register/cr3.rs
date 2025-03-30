@@ -1,4 +1,4 @@
-use crate::register::CR4;
+use crate::register::{Read, CR4};
 use bitflags::bitflags;
 use core::arch::asm;
 
