@@ -36,6 +36,3 @@ pub unsafe fn write(base: usize, mode: Mode) {
 
     unsafe { asm!("csrw stvec, {}", in(reg) stvec) };
 }
-
-/// # Safety
-pub unsafe fn update(f: impl FnOnce()) {}
