@@ -1,7 +1,6 @@
+use super::Read;
 use crate::address::Virtual;
 use core::arch::asm;
-
-use super::Read;
 
 #[derive(Debug)]
 pub struct CR2;
