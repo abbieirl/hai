@@ -1,4 +1,4 @@
-use crate::address::VirtualAddress;
+use crate::address::Virtual;
 use core::arch::asm;
 use core::marker::PhantomData;
 
@@ -15,7 +15,7 @@ impl Table {
     fn ptr(&self) -> Pointer {
         Pointer {
             limit: (size_of::<Table>() - 1) as u16,
-            base: VirtualAddress::new(self as *const _ as u64),
+            base: Virtual::new(self as *const _ as u64),
         }
     }
 }
@@ -25,7 +25,7 @@ impl Table {
 #[derive(Debug)]
 pub struct Pointer {
     limit: u16,
-    base: VirtualAddress,
+    base: Virtual,
 }
 
 /// An interrupt descriptor.

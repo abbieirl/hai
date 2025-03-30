@@ -1,8 +1,14 @@
+#[derive(Debug)]
+pub enum Address {
+    Virtual(Virtual),
+    Physical(Physical),
+}
+
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
-pub struct VirtualAddress(u64);
+pub struct Virtual(u64);
 
-impl VirtualAddress {
+impl Virtual {
     #[inline]
     pub const fn new(address: u64) -> Self {
         Self(address)
@@ -11,9 +17,9 @@ impl VirtualAddress {
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
-pub struct PhysicalAddress(u64);
+pub struct Physical(u64);
 
-impl PhysicalAddress {
+impl Physical {
     #[inline]
     pub const fn new(address: u64) -> Self {
         Self(address)
