@@ -6,7 +6,7 @@ bitflags! {
     #[repr(transparent)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct CR0: u64 {
-        /// **P**rotected **M**ode **E**nable
+        /// **P**rotected Mode **E**nable
         /// - If 1, system is in protected mode, else, system is in real mode.
         const PE = 1 << 0;
 
@@ -18,8 +18,8 @@ bitflags! {
         /// If set, no x87 floating-point unit present, if clear, x87 FPU present.
         const EM = 1 << 2;
 
-        /// **Task **switched
-        /// Allows saving x87 task context upon a task switch only after x87 instruction used.
+        /// **T**ask **s**witched
+        /// - Allows saving x87 task context upon a task switch only after x87 instruction used.
         const TS = 1 << 3;
 
         /// **E**xtension **t**ype
